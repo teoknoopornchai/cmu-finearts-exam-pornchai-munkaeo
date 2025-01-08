@@ -1,0 +1,38 @@
+
+version: '3.8'
+
+services:
+  # เว็บเซิร์ฟเวอร์ PHP + Apache
+  web:
+    build: .
+    container_name: php-web
+    ports:
+      - "8080:80"  # เปิดพอร์ต 8080 ของโฮสต์ไปยังพอร์ต 80 ของคอนเทนเนอร์
+    volumes:
+      - .:/var/www/html/  # เชื่อมโยงไฟล์ในโปรเจกต์กับคอนเทนเนอร์
+    networks:
+      - my_network
+
+  # MySQL Database
+  db:
+    image: mysql:5.7
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # รหัสผ่านของ root
+      MYSQL_DATABASE: my_database  # ชื่อฐานข้อมูลที่ต้องการสร้าง
+      MYSQL_USER: user  # ชื่อผู้ใช้
+      MYSQL_PASSWORD: password  # รหัสผ่านของผู้ใช้
+    ports:
+      - "3306:3306"  # เปิดพอร์ต 3306 สำหรับการเข้าถึง MySQL จากภายนอก
+    volumes:
+      - db_data:/var/lib/mysql  # เชื่อมโยงข้อมูล MySQL
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
